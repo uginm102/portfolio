@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eugene Munyaneza — Software Developer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg: #0b0f14;
+      --surface: #111720;
+      --border: #1e2a38;
+      --gold: #c9a84c;
+      --gold-light: #e8c97a;
+      --text: #d6dde8;
+      --muted: #6b7e96;
+      --accent: #3a7bd5;
+      --white: #f0f4fa;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.4;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.4rem 4rem;
+      background: rgba(11,15,20,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--gold);
+      letter-spacing: 0.04em;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 400;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--gold); }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      padding: 8rem 4rem 5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 60% at 70% 50%, rgba(58,123,213,0.08) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 20% 80%, rgba(201,168,76,0.06) 0%, transparent 60%);
+    }
+
+    .hero-grid-lines {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    .hero-left { position: relative; z-index: 2; }
+
+    .hero-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--gold);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.6s 0.2s ease forwards;
+    }
+
+    .hero-tag::before {
+      content: '';
+      display: block;
+      width: 32px;
+      height: 1px;
+      background: var(--gold);
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 6vw, 5.5rem);
+      font-weight: 700;
+      line-height: 1.05;
+      color: var(--white);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.7s 0.35s ease forwards;
+    }
+
+    h1 em {
+      font-style: italic;
+      color: var(--gold);
+    }
+
+    .hero-desc {
+      max-width: 480px;
+      font-size: 1rem;
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      animation: fadeUp 0.7s 0.5s ease forwards;
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.7s 0.65s ease forwards;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.8rem 1.8rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 2px;
+      transition: all 0.25s;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-primary {
+      background: var(--gold);
+      color: #0b0f14;
+      font-weight: 500;
+    }
+
+    .btn-primary:hover {
+      background: var(--gold-light);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(201,168,76,0.3);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+      transform: translateY(-2px);
+    }
+
+    /* HERO RIGHT — stat cards */
+    .hero-right {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 1rem;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1.4rem 1.8rem;
+      width: 240px;
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      animation: slideLeft 0.6s ease forwards;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px; height: 100%;
+      background: var(--gold);
+    }
+
+    .stat-card:nth-child(1) { animation-delay: 0.6s; }
+    .stat-card:nth-child(2) { animation-delay: 0.75s; margin-right: 2rem; }
+    .stat-card:nth-child(3) { animation-delay: 0.9s; }
+
+    .stat-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 0.3rem;
+    }
+
+    .stat-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    /* ── SECTIONS ── */
+    section {
+      padding: 7rem 4rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-bottom: 4rem;
+    }
+
+    .section-num {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--gold);
+      letter-spacing: 0.1em;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 3vw, 2.8rem);
+      color: var(--white);
+      font-weight: 700;
+    }
+
+    .section-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── ABOUT ── */
+    #about {
+      border-top: 1px solid var(--border);
+      max-width: 100%;
+      padding: 7rem 4rem;
+      background: var(--surface);
+    }
+
+    #about .inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: start;
+    }
+
+    .about-text p {
+      color: var(--muted);
+      line-height: 1.9;
+      margin-bottom: 1.2rem;
+      font-size: 1rem;
+    }
+
+    .about-text p strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .contact-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.9rem 1.2rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      text-decoration: none;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .contact-item:hover {
+      border-color: var(--gold);
+      transform: translateX(4px);
+    }
+
+    .contact-icon {
+      font-size: 1rem;
+      width: 24px;
+      text-align: center;
+    }
+
+    .contact-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+
+    .contact-val {
+      font-size: 0.85rem;
+      color: var(--text);
+    }
+
+    /* ── EXPERIENCE ── */
+    .timeline {
+      position: relative;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 1px;
+      background: var(--border);
+    }
+
+    .timeline-item {
+      padding-left: 2.5rem;
+      padding-bottom: 3.5rem;
+      position: relative;
+    }
+
+    .timeline-item:last-child { padding-bottom: 0; }
+
+    .timeline-dot {
+      position: absolute;
+      left: -5px; top: 6px;
+      width: 11px; height: 11px;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 2px solid var(--gold);
+    }
+
+    .timeline-meta {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .timeline-date {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--gold);
+      letter-spacing: 0.08em;
+    }
+
+    .timeline-org {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      padding: 0.15rem 0.6rem;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+    }
+
+    .timeline-role {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      color: var(--white);
+      margin-bottom: 0.8rem;
+    }
+
+    .timeline-desc {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.8;
+      margin-bottom: 1rem;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--gold);
+      border: 1px solid rgba(201,168,76,0.3);
+      padding: 0.2rem 0.6rem;
+      border-radius: 2px;
+      letter-spacing: 0.06em;
+    }
+
+    /* ── SKILLS ── */
+    #skills { border-top: 1px solid var(--border); }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 1rem;
+    }
+
+    .skill-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 1.2rem 1.4rem;
+      transition: border-color 0.2s, transform 0.2s;
+      cursor: default;
+    }
+
+    .skill-card:hover {
+      border-color: var(--gold);
+      transform: translateY(-3px);
+    }
+
+    .skill-icon { font-size: 1.4rem; margin-bottom: 0.6rem; }
+
+    .skill-name {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--text);
+      letter-spacing: 0.05em;
+    }
+
+    .skill-bar {
+      height: 2px;
+      background: var(--border);
+      border-radius: 1px;
+      margin-top: 0.7rem;
+      overflow: hidden;
+    }
+
+    .skill-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+      border-radius: 1px;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.6s ease;
+    }
+
+    .skill-card:hover .skill-fill { transform: scaleX(1); }
+
+    /* ── EDUCATION ── */
+    #education { border-top: 1px solid var(--border); }
+
+    .edu-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .edu-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.25s;
+    }
+
+    .edu-card:hover { border-color: var(--gold); }
+
+    .edu-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; right: 0;
+      width: 80px; height: 80px;
+      background: radial-gradient(circle, rgba(201,168,76,0.08), transparent 70%);
+    }
+
+    .edu-degree {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--white);
+      margin-bottom: 0.4rem;
+      line-height: 1.3;
+    }
+
+    .edu-uni {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 0.3rem;
+    }
+
+    .edu-year {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--gold);
+      letter-spacing: 0.08em;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 3rem 4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 100%;
+    }
+
+    .footer-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      color: var(--gold);
+    }
+
+    .footer-copy {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .footer-links a {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--gold); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideLeft {
+      from { opacity: 0; transform: translateX(30px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    /* ── SCROLL REVEAL ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── MOBILE ── */
+    @media (max-width: 768px) {
+      nav { padding: 1.2rem 1.5rem; }
+      .nav-links { gap: 1.2rem; }
+      #hero { grid-template-columns: 1fr; padding: 7rem 1.5rem 4rem; }
+      .hero-right { display: none; }
+      section { padding: 5rem 1.5rem; }
+      #about { padding: 5rem 1.5rem; }
+      #about .inner { grid-template-columns: 1fr; gap: 3rem; }
+      .edu-grid { grid-template-columns: 1fr; }
+      footer { flex-direction: column; gap: 1rem; text-align: center; padding: 2rem 1.5rem; }
+      .footer-links { flex-wrap: wrap; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a class="nav-logo" href="#hero">EM</a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#education">Education</a></li>
+      <li><a href="mailto:munyanezae@gmail.com" class="btn btn-primary" style="padding:0.45rem 1.1rem; font-size:0.65rem;">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid-lines"></div>
+
+    <div class="hero-left">
+      <p class="hero-tag">Software Developer · 12+ Years</p>
+      <h1>Eugene<br /><em>Munyaneza</em></h1>
+      <p class="hero-desc">
+        Building scalable, secure software for international organisations, governments, and enterprises. From Kigali to the United Nations — code that matters.
+      </p>
+      <div class="hero-ctas">
+        <a href="#experience" class="btn btn-primary">View Experience</a>
+        <a href="mailto:munyanezae@gmail.com" class="btn btn-outline">Get in Touch</a>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="stat-card">
+        <div class="stat-number">12+</div>
+        <div class="stat-label">Years of Experience</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">10+</div>
+        <div class="stat-label">Enterprise Projects</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">4</div>
+        <div class="stat-label">Countries Served</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <div id="about">
+    <div class="inner">
+      <div class="about-text reveal">
+        <div class="section-header" style="margin-bottom:2rem;">
+          <span class="section-num">01</span>
+          <h2 class="section-title">About</h2>
+          <div class="section-line"></div>
+        </div>
+        <p>
+          I'm an <strong>experienced, result-driven software developer</strong> with over a decade of expertise designing, developing, and leading complex software projects across finance, government, and international organisations.
+        </p>
+        <p>
+          My background combines deep technical proficiency with effective client collaboration and team leadership — positioning me to excel in roles requiring both hands-on coding and strategic guidance.
+        </p>
+        <p>
+          Currently contributing to critical global systems at the <strong>United Nations</strong>, I've previously delivered enterprise solutions in Uganda, Rwanda, South Sudan, and the United Kingdom.
+        </p>
+      </div>
+
+      <div class="reveal" style="transition-delay: 0.15s;">
+        <div class="section-header" style="margin-bottom:2rem;">
+          <span class="section-num">&nbsp;</span>
+          <h2 class="section-title" style="font-size:1.4rem;">Contact</h2>
+          <div class="section-line"></div>
+        </div>
+        <div class="contact-grid">
+          <a class="contact-item" href="mailto:munyanezae@gmail.com">
+            <span class="contact-icon">✉</span>
+            <div>
+              <div class="contact-label">Email</div>
+              <div class="contact-val">munyanezae@gmail.com</div>
+            </div>
+          </a>
+          <a class="contact-item" href="https://www.linkedin.com/in/uginm102/" target="_blank" rel="noopener">
+            <span class="contact-icon">in</span>
+            <div>
+              <div class="contact-label">LinkedIn</div>
+              <div class="contact-val">linkedin.com/in/uginm102</div>
+            </div>
+          </a>
+          <div class="contact-item">
+            <span class="contact-icon">📍</span>
+            <div>
+              <div class="contact-label">Location</div>
+              <div class="contact-val">Entebbe, Uganda</div>
+            </div>
+          </div>
+          <div class="contact-item">
+            <span class="contact-icon">🌐</span>
+            <div>
+              <div class="contact-label">Languages</div>
+              <div class="contact-val">English (Advanced) · Kiswahili</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXPERIENCE -->
+  <section id="experience">
+    <div class="section-header reveal">
+      <span class="section-num">02</span>
+      <h2 class="section-title">Experience</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="timeline">
+
+      <div class="timeline-item reveal">
+        <div class="timeline-dot"></div>
+        <div class="timeline-meta">
+          <span class="timeline-date">Sep 2015 — Present</span>
+          <span class="timeline-org">United Nations · Entebbe, Uganda</span>
+        </div>
+        <div class="timeline-role">Software Developer</div>
+        <p class="timeline-desc">
+          Developed and maintained critical systems supporting UN field operations — including the Field Support Suite, Vehicle Acquisition System, National Police Recruitment System, and Unite Visa platform. Delivered secure, scalable solutions under tight international deadlines.
+        </p>
+        <p class="timeline-desc" style="margin-bottom:0.8rem;">
+          Key responsibilities included gathering client requirements, developing business workflows, building mobile interfaces with React &amp; TypeScript using Progressive Web Apps, data reporting with XSLT, Telerik, ETL, and Power BI, and writing SQL stored procedures in MSSQL Server.
+        </p>
+        <div class="tag-list">
+          <span class="tag">C# / ASP.NET Core</span>
+          <span class="tag">React</span>
+          <span class="tag">TypeScript</span>
+          <span class="tag">MSSQL</span>
+          <span class="tag">Power BI</span>
+          <span class="tag">XSLT</span>
+          <span class="tag">ETL</span>
+        </div>
+      </div>
+
+      <div class="timeline-item reveal">
+        <div class="timeline-dot"></div>
+        <div class="timeline-meta">
+          <span class="timeline-date">Aug 2013 — Aug 2015</span>
+          <span class="timeline-org">Laboremus Uganda Ltd · Kampala</span>
+        </div>
+        <div class="timeline-role">Lead Software Developer</div>
+        <p class="timeline-desc">
+          Led technical development and delivery of multiple enterprise-grade applications: Pareto project finance audit trail, Orient Bank CMS, Agenda Kaupang CMS, a Microsoft Word plugin using VSTO, and the NetCom HR &amp; payroll management system.
+        </p>
+        <p class="timeline-desc">
+          Acted as technical lead ensuring code quality, performance, and scalability. Developed custom plugins and integrated systems for client-specific requirements.
+        </p>
+        <div class="tag-list">
+          <span class="tag">Team Leadership</span>
+          <span class="tag">WordPress</span>
+          <span class="tag">VSTO</span>
+          <span class="tag">Laravel</span>
+          <span class="tag">BDD Testing</span>
+        </div>
+      </div>
+
+      <div class="timeline-item reveal">
+        <div class="timeline-dot"></div>
+        <div class="timeline-meta">
+          <span class="timeline-date">Jan 2013 — Aug 2013</span>
+          <span class="timeline-org">MLPS&amp;HRD · South Sudan</span>
+        </div>
+        <div class="timeline-role">Software Developer</div>
+        <p class="timeline-desc">
+          Designed and developed core government systems for payroll and pension management: the South Sudan Electronic Payroll System (SSEPS) and Pension Information Management System (PIMS). Ensured data accuracy, security, and compliance with public sector standards.
+        </p>
+        <div class="tag-list">
+          <span class="tag">Government Systems</span>
+          <span class="tag">Payroll</span>
+          <span class="tag">SQL</span>
+          <span class="tag">Security &amp; Compliance</span>
+        </div>
+      </div>
+
+      <div class="timeline-item reveal">
+        <div class="timeline-dot"></div>
+        <div class="timeline-meta">
+          <span class="timeline-date">Jan 2012 — Dec 2012</span>
+          <span class="timeline-org">Clinton Health Access Initiative · Kigali</span>
+        </div>
+        <div class="timeline-role">Junior Developer</div>
+        <p class="timeline-desc">
+          Developed a medical equipment management and maintenance system for Rwanda's Ministry of Health — tracking all public medical equipment, including maintenance, repairs, and disposal. Collaborated with senior developers on RESTful APIs using Java and Groovy on Grails.
+        </p>
+        <div class="tag-list">
+          <span class="tag">Java</span>
+          <span class="tag">Groovy on Grails</span>
+          <span class="tag">REST APIs</span>
+          <span class="tag">Healthcare</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills" style="border-top:1px solid var(--border);">
+    <div class="section-header reveal">
+      <span class="section-num">03</span>
+      <h2 class="section-title">Skills</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="skills-grid">
+      <div class="skill-card reveal">
+        <div class="skill-icon">⚙️</div>
+        <div class="skill-name">ASP.NET Core</div>
+        <div class="skill-bar"><div class="skill-fill" style="width:95%"></div></div>
+      </div>
+      <div class="skill-card reveal">
+        <div class="skill-icon">🔷</div>
+        <div class="skill-name">C# Programming</div>
+        <div class="skill-bar"><div class="skill-fill" style="width:92%"></div></div>
+      </div>
+      <div class="skill-card reveal">
+        <div class="skill-icon">⚛️</div>
+        <div class="skill-name">React</div>
+        <div class="skill-bar"><div class="skill-fill" style="width:88%"></div></div>
+      </div>
+      <div class="skill-card reveal">
+        <div class="skill-icon">🔷</div>
+        <div class="skill-name">TypeScript</div>
+        <div class="skill-bar"><div class="skill-fill" style="width:85%"></div></div>
+      </div>
+      <div class="skill-card reveal">
+        <div class="skill-icon">🐍</div>
+        <div class="skill-name">Django</div>
+        <div class="skill-bar"><div class="skill-fill" style="width:80%"></div></div>
+      </div>
+      <div class="skill-card reveal">
+        <div class="skill-icon">🗄️</div>
+        <div class="skill-name">SQL / MSSQL</div>
+        <div class="skill-bar"><div class="skill-fill" style="width:90%"></div></div>
+      </div>
+      <div class="skill-card reveal">
+        <div class="skill-icon">🌿</div>
+        <div class="skill-name">Laravel</div>
+        <div class="skill-bar"><div class="skill-fill" style="width:78%"></div></div>
+      </div>
+      <div class="skill-card reveal">
+        <div class="skill-icon">📊</div>
+        <div class="skill-name">Power BI / ETL</div>
+        <div class="skill-bar"><div class="skill-fill" style="width:82%"></div></div>
+      </div>
+      <div class="skill-card reveal">
+        <div class="skill-icon">🧪</div>
+        <div class="skill-name">Software Testing</div>
+        <div class="skill-bar"><div class="skill-fill" style="width:87%"></div></div>
+      </div>
+      <div class="skill-card reveal">
+        <div class="skill-icon">🖥️</div>
+        <div class="skill-name">ASP.NET MVC</div>
+        <div class="skill-bar"><div class="skill-fill" style="width:90%"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EDUCATION -->
+  <section id="education">
+    <div class="section-header reveal">
+      <span class="section-num">04</span>
+      <h2 class="section-title">Education</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="edu-grid">
+      <div class="edu-card reveal">
+        <div class="edu-degree">Master of Science<br/>in Project Management</div>
+        <div class="edu-uni">University of Salford · Salford, United Kingdom</div>
+        <div class="edu-year">Feb 2019 — Dec 2021</div>
+      </div>
+      <div class="edu-card reveal" style="transition-delay:0.1s;">
+        <div class="edu-degree">Bachelor of Science<br/>in Computer Science</div>
+        <div class="edu-uni">Makerere University · Kampala, Uganda</div>
+        <div class="edu-year">Aug 2008 — Jan 2012</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-name">Eugene Munyaneza</div>
+    <div class="footer-copy">© 2026 · All rights reserved</div>
+    <div class="footer-links">
+      <a href="mailto:munyanezae@gmail.com">Email</a>
+      <a href="https://www.linkedin.com/in/uginm102/" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="#hero">Back to Top</a>
+    </div>
+  </footer>
+
+  <script>
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    reveals.forEach(r => io.observe(r));
+
+    // Animate skill bars on hover (also trigger on scroll into view)
+    const skillCards = document.querySelectorAll('.skill-card');
+    const skillIO = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.querySelector('.skill-fill').style.transform = 'scaleX(1)';
+        }
+      });
+    }, { threshold: 0.5 });
+    skillCards.forEach(c => skillIO.observe(c));
+
+    // Nav active state on scroll
+    const sections = document.querySelectorAll('section[id], div[id]');
+    const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(s => {
+        if (window.scrollY >= s.offsetTop - 120) current = s.id;
+      });
+      navLinks.forEach(a => {
+        a.style.color = a.getAttribute('href') === '#' + current ? 'var(--gold)' : '';
+      });
+    });
+  </script>
+</body>
+</html>
